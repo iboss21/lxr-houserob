@@ -130,7 +130,8 @@ files {
     'html/index.html',
     'html/style.css',
     'html/script.js',
-    'locales/*.json'
+    'locales/*.json',
+    'version.json'
 }
 
 -- ████████████████████████████████████████████████████████████████████████████████
@@ -148,20 +149,19 @@ dependency '/assetpacks'
 -- ███████████████████████████████ ESCROW SETTINGS ████████████████████████████████
 -- ████████████████████████████████████████████████████████████████████████████████
 -- Files that will remain unencrypted for Tebex escrow distribution
+-- Only configuration and customization files are exposed for buyer editing
 
 escrow_ignore {
-    'config.lua',                  -- Main configuration file
-    'client/editable.lua',         -- Client-side editable functions
-    'client/main/*.lua',           -- Client main scripts
-    'client/functions/*.lua',      -- Client utility functions
-    'server/main/*.lua',           -- Server main scripts
-    'server/callbacks/*.lua',      -- Server callbacks
-    'server/webhooks/*.lua',       -- Webhook functionality
-    'shared/*.lua',                -- Shared utilities
-    'locales/*.json',              -- Translation files
-    'html/*.html',                 -- UI HTML files
-    'html/*.css',                  -- UI stylesheets
-    'html/*.js'                    -- UI JavaScript files
+    'config.lua',                  -- Main configuration file (editable)
+    'client/editable.lua',         -- Client-side editable functions (customizable minigames)
+    'locales/*.json',              -- Translation files (translatable)
+    'html/*.html',                 -- UI HTML files (customizable)
+    'html/*.css',                  -- UI stylesheets (customizable)
+    'html/*.js',                   -- UI JavaScript files (customizable)
+    'stream/*.ymap',               -- Map files (viewable)
+    'README.md',                   -- Documentation
+    'docs/*.md',                   -- Additional documentation
+    'LICENSE'                      -- License file
 }
 
 --[[

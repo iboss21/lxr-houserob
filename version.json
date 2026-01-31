@@ -1,0 +1,110 @@
+{
+    "resource": "lxr-houserob",
+    "name": "LXR House Robbery System",
+    "version": "2.0.0",
+    "release_date": "2026-01-31",
+    "description": "Professional house robbery system for RedM with instanced interiors, NPC defenders, and comprehensive features",
+    "framework": "RSG-Core",
+    "platform": "RedM",
+    "author": "LXR Development Team",
+    "original_author": "younNGG97",
+    "license": "Commercial",
+    "changelog_url": "https://github.com/iboss21/lxr-houserob/blob/main/README.md#-changelog",
+    "documentation_url": "https://lxr-scripts.com/docs/house-robbery",
+    "support_url": "https://discord.gg/lxr",
+    "store_url": "https://lxr.tebex.io",
+    "repository_url": "https://github.com/iboss21/lxr-houserob",
+    "update_check": {
+        "enabled": true,
+        "check_url": "https://api.github.com/repos/iboss21/lxr-houserob/releases/latest",
+        "interval": 86400
+    },
+    "requirements": {
+        "server": {
+            "redm_build": "1355",
+            "fxserver": "latest",
+            "database": "MySQL/MariaDB"
+        },
+        "dependencies": {
+            "required": [
+                "rsg-core",
+                "ox_lib"
+            ],
+            "optional": [
+                "ox_target",
+                "jo_libs",
+                "rsg-lawman",
+                "rsg-tips"
+            ]
+        }
+    },
+    "features": [
+        "Instanced interiors with routing buckets",
+        "NPC defenders with combat AI",
+        "Guard dog system",
+        "Police alert and dispatch system",
+        "Discord webhook integration",
+        "Lockpicking minigame",
+        "Comprehensive loot system",
+        "Cooldown management",
+        "Multi-language support",
+        "Full escrow support"
+    ],
+    "performance": {
+        "idle_ms": "0.00",
+        "active_ms": "0.01-0.03",
+        "peak_ms": "0.05",
+        "memory_mb": "5-10"
+    },
+    "compatibility": {
+        "frameworks": ["RSG-Core", "QB-Core", "LXRCore", "Standalone"],
+        "redm_version": "1355+",
+        "escrow": true,
+        "tebex_ready": true,
+        "cfx_compliant": true
+    },
+    "versions": {
+        "2.0.0": {
+            "release_date": "2026-01-31",
+            "type": "major",
+            "changes": [
+                "Major code restructure and optimization",
+                "Professional branding and documentation",
+                "Discord webhook system with 8+ events",
+                "Enhanced NPC AI and guard dogs",
+                "Progressive police alert system",
+                "Comprehensive loot table system",
+                "Sound effects and visual feedback",
+                "Escrow structure for Tebex distribution",
+                "Documentation moved to docs folder",
+                "CFX compliance verification"
+            ],
+            "breaking_changes": false,
+            "migration_required": false
+        },
+        "1.0.0": {
+            "release_date": "2025-12-01",
+            "type": "initial",
+            "changes": [
+                "Initial release by younNGG97",
+                "Basic house robbery functionality",
+                "Simple NPC system",
+                "Basic loot system"
+            ]
+        }
+    },
+    "support": {
+        "discord": "https://discord.gg/lxr",
+        "email": "support@lxr-scripts.com",
+        "documentation": "https://lxr-scripts.com/docs",
+        "issues": "https://github.com/iboss21/lxr-houserob/issues",
+        "response_time": "24 hours"
+    },
+    "legal": {
+        "copyright": "Copyright © 2026 LXR Development - All Rights Reserved",
+        "license_type": "Commercial Single Server",
+        "terms_url": "https://lxr-scripts.com/terms",
+        "privacy_url": "https://lxr-scripts.com/privacy",
+        "refund_policy": "Digital products are non-refundable after download"
+    }
+}
