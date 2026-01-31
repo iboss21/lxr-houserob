@@ -34,9 +34,9 @@ CreateThread(function()
                 end,
             	onSelect = function()
                     
-            		local count = lib.callback.await('y0-houserobbery:server:checkLawmen')
+            		local count = lib.callback.await('lxr-houserob:server:checkLawmen')
             		if count < Config.lawmenMinimun then return end
-            		local inCooldown = lib.callback.await('y0-houserobbery:server:checkCooldown', false, k, v)
+            		local inCooldown = lib.callback.await('lxr-houserob:server:checkCooldown', false, k, v)
             		if inCooldown then return end
                     local playerPed = PlayerPedId()
                     local animDict = Config.Animations.HouseEnter.anim
@@ -61,13 +61,13 @@ CreateThread(function()
                             if chance < Config.PoliceChance then
                                 TriggerPolice(entercoords, v.name)
                             end
-                            lib.callback.await('y0-houserobbery:server:removeItem', false, Config.BreakInItem)
-                            TriggerServerEvent('y0-houserobbery:server:TriggerCooldown', "activate",k)
+                            lib.callback.await('lxr-houserob:server:removeItem', false, Config.BreakInItem)
+                            TriggerServerEvent('lxr-houserob:server:TriggerCooldown', "activate",k)
                             EnterHouse(k, v)
                         end
 
                         if Config.LockpickBreaksOnError then
-                            lib.callback.await('y0-houserobbery:server:removeItem', false, Config.BreakInItem)
+                            lib.callback.await('lxr-houserob:server:removeItem', false, Config.BreakInItem)
                         end
 
                     ClearPedTasks(playerPed)

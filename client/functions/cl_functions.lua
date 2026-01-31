@@ -35,7 +35,7 @@ function EnterHouse(id, data)
 
 	DoScreenFadeOut(2000)
 	Wait(2000)
-	TriggerServerEvent('y0-houserobbery:server:RoutingBucket', "Enter", data,id)
+	TriggerServerEvent('lxr-houserob:server:RoutingBucket', "Enter", data,id)
 	SetEntityCoords(playerPed, coords.x, coords.y, coords.z + 0.2, 1, 0, 0, 0)
 	FreezeEntityPosition(playerPed, true)
 	Wait(4000)
@@ -70,7 +70,7 @@ function EnterHouse(id, data)
 				})
 
 				if progressBar then
-					TriggerServerEvent('y0-houserobbery:server:ReceiveSpecialReward', houseData)
+					TriggerServerEvent('lxr-houserob:server:ReceiveSpecialReward', houseData)
 
 					if Config.DeletePropAfterInteraction then
 						DeleteEntity(specialProp)
@@ -115,7 +115,7 @@ end
     				})
 					table.insert(RobLocations, { zone = zoneName, coords = coords, id = id })
     				if progressBar then
-						TriggerServerEvent('y0-houserobbery:server:ReceiveReward', houseData, k)
+						TriggerServerEvent('lxr-houserob:server:ReceiveReward', houseData, k)
 							if Config.DeletePropAfterInteraction then
 								for i, propData in ipairs(Props) do
 									if propData.zone == zoneName  then
@@ -141,7 +141,7 @@ end
 		local npcDog = jo.entity.create(houseData.Dog.model, dogCoords, math.random(0, 360), true, 0)
 		Citizen.InvokeNative(0x283978A15512B2FE, npcDog, true)
 		FreezeEntityPosition(npcDog, true)
-		TriggerServerEvent('y0-houserobbery:server:RoutingBucketPed', PedToNet(npcDog))
+		TriggerServerEvent('lxr-houserob:server:RoutingBucketPed', PedToNet(npcDog))
 		TaskCombatPed(npcDog, playerPed, 0, 16)
 		SetEntityAsMissionEntity(npcDog, true, true)
 		table.insert(NpcPeds, { ped = npcDog })
@@ -157,7 +157,7 @@ end
 		while not HasModelLoaded(houseData.npcModel) do Wait(10) end
 		local npcSpawnLocation = houseData.npcSpawnLocation
 		NpcPed = jo.entity.create(houseData.npcModel, npcSpawnLocation, math.random(0, 360), true, 0)
-		TriggerServerEvent('y0-houserobbery:server:RoutingBucketPed', PedToNet(NpcPed))
+		TriggerServerEvent('lxr-houserob:server:RoutingBucketPed', PedToNet(NpcPed))
 		FreezeEntityPosition(NpcPed, true)
 		Citizen.InvokeNative(0x283978A15512B2FE, NpcPed, true)
 		Citizen.InvokeNative(0x5E3BDDBCB83F3D84, NpcPed, GetHashKey(houseData.npcWeapon), houseData.ammoCount, false, true, true)
@@ -228,7 +228,7 @@ end
 
 			Wait(4000)
 			DoScreenFadeIn(800)
-			TriggerServerEvent('y0-houserobbery:server:RoutingBucket', "Exit",data,id)
+			TriggerServerEvent('lxr-houserob:server:RoutingBucket', "Exit",data,id)
 
 			for i, propData in ipairs(Props) do
 				if propData.zone == zoneName and DoesEntityExist(propData.prop) then
@@ -312,7 +312,7 @@ end)
 				Alerted = false
 				SendNUIMessage({ action = "hide" })
 				SetEntityCoords(playerPed, data.entercoords.x, data.entercoords.y, data.entercoords.z + 0.5, 1, 0, 0, 0)
-				TriggerServerEvent('y0-houserobbery:server:RoutingBucket', "Exit", data,id)
+				TriggerServerEvent('lxr-houserob:server:RoutingBucket', "Exit", data,id)
 				Wait(4000)
 				SendNUIMessage({ action = "hide" })
 				DoScreenFadeIn(800)
