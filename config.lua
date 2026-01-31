@@ -1,23 +1,108 @@
+--[[
+    ██╗     ██╗  ██╗██████╗       ██╗  ██╗ ██████╗ ██╗   ██╗███████╗███████╗██████╗  ██████╗ ██████╗ 
+    ██║     ╚██╗██╔╝██╔══██╗      ██║  ██║██╔═══██╗██║   ██║██╔════╝██╔════╝██╔══██╗██╔═══██╗██╔══██╗
+    ██║      ╚███╔╝ ██████╔╝█████╗███████║██║   ██║██║   ██║███████╗█████╗  ██████╔╝██║   ██║██████╔╝
+    ██║      ██╔██╗ ██╔══██╗╚════╝██╔══██║██║   ██║██║   ██║╚════██║██╔══╝  ██╔══██╗██║   ██║██╔══██╗
+    ███████╗██╔╝ ██╗██║  ██║      ██║  ██║╚██████╔╝╚██████╔╝███████║███████╗██║  ██║╚██████╔╝██████╔╝
+    ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝      ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ 
+    
+    Configuration File - House Robbery System
+    Copyright © 2026 LXR Development - All Rights Reserved
+]]
+
 Config = {}
 
+--────────────────────────────────────────────────────────────────────────────
+-- DISCORD WEBHOOK CONFIGURATION
+--────────────────────────────────────────────────────────────────────────────
+Config.Webhooks = {
+    Enabled = true, -- Enable/disable webhook system
+    
+    -- Webhook URLs (get from Discord Server Settings > Integrations > Webhooks)
+    URLs = {
+        RobberyAttempt = '', -- Webhook for robbery attempts
+        RobberySuccess = '', -- Webhook for successful robberies
+        PoliceAlert = '',    -- Webhook for police alerts
+        PlayerCaught = '',   -- Webhook for player caught/killed
+    },
+    
+    -- Webhook Settings
+    Settings = {
+        BotName = 'LXR House Robbery',
+        BotAvatar = 'https://i.imgur.com/your-avatar.png',
+        Color = 15158332, -- Decimal color (red: 15158332, green: 3066993, blue: 3447003)
+        Footer = 'LXR House Robbery System | v2.0.0',
+        Timestamp = true, -- Include timestamp in embeds
+    },
+    
+    -- Notification Types
+    Types = {
+        RobberyAttempt = {
+            enabled = true,
+            title = '🏠 House Robbery Attempt',
+            color = 16776960, -- Yellow
+        },
+        RobberySuccess = {
+            enabled = true,
+            title = '✅ Successful Robbery',
+            color = 3066993, -- Green
+        },
+        PoliceAlert = {
+            enabled = true,
+            title = '🚨 Police Alert',
+            color = 15158332, -- Red
+        },
+        PlayerCaught = {
+            enabled = true,
+            title = '⚠️ Player Caught',
+            color = 16744448, -- Orange
+        },
+    }
+}
 
+--────────────────────────────────────────────────────────────────────────────
+-- GAMEPLAY CONFIGURATION
+--────────────────────────────────────────────────────────────────────────────
+
+
+-- Minimum number of lawmen required online for robberies
 Config.lawmenMinimun = 0
 
+-- Chance (percentage) of police being alerted during robbery
 Config.PoliceChance = 20
+
+-- Chance (percentage) of NPC spawning inside house
 Config.npcChance = 100
-Config.HouseCooldowns = 1800 -- In Seconds 
-Config.DeletePropAfterInteraction = true -- if true, Props will be removed once you interact with them // if false props only get removed once you leave the house
 
+-- Cooldown between robberies (in seconds)
+Config.HouseCooldowns = 1800 -- 30 minutes
+
+-- Delete props after interaction (true) or when leaving house (false)
+Config.DeletePropAfterInteraction = true
+
+-- Time required to search locations (in milliseconds)
 Config.SearchingTime = 3000
-Config.BreakInItem = 'lockpick'
-Config.LockpickBreaksOnError = true -- on Break In if lockpick minigame is failed lockpick gets broken
 
+-- Item required to break into houses
+Config.BreakInItem = 'lockpick'
+
+-- Whether lockpick breaks on failed minigame
+Config.LockpickBreaksOnError = true
+
+--────────────────────────────────────────────────────────────────────────────
+-- ANIMATION CONFIGURATION
+--────────────────────────────────────────────────────────────────────────────
 Config.Animations = {
 	HouseEnter = {
 		anim = 'script_ca@carust@02@ig@ig1_rustlerslockpickingconv01',
 		clip = 'idle_04_smhthug_01',
 	}
 }
+
+--────────────────────────────────────────────────────────────────────────────
+-- HOUSES CONFIGURATION
+-- Configure all robbable houses with rewards, NPCs, and special loot
+--────────────────────────────────────────────────────────────────────────────
 
 Config.HousesToRob =  {
 	[1] = { 

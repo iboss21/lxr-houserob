@@ -1,3 +1,22 @@
+--[[
+    ██╗     ██╗  ██╗██████╗       ██╗  ██╗ ██████╗ ██╗   ██╗███████╗███████╗██████╗  ██████╗ ██████╗ 
+    ██║     ╚██╗██╔╝██╔══██╗      ██║  ██║██╔═══██╗██║   ██║██╔════╝██╔════╝██╔══██╗██╔═══██╗██╔══██╗
+    ██║      ╚███╔╝ ██████╔╝█████╗███████║██║   ██║██║   ██║███████╗█████╗  ██████╔╝██║   ██║██████╔╝
+    ██║      ██╔██╗ ██╔══██╗╚════╝██╔══██║██║   ██║██║   ██║╚════██║██╔══╝  ██╔══██╗██║   ██║██╔══██╗
+    ███████╗██╔╝ ██╗██║  ██║      ██║  ██║╚██████╔╝╚██████╔╝███████║███████╗██║  ██║╚██████╔╝██████╔╝
+    ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝      ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ 
+    
+    Client Functions - Interior Robbery Mechanics
+    Copyright © 2026 LXR Development - All Rights Reserved
+    
+    This script handles interior house robbery functionality:
+    - House entry and exit teleportation
+    - NPC and dog spawning
+    - Loot location creation and interaction
+    - Search minigames and prop management
+    - Routing bucket handling for instanced interiors
+]]
+
 local RSGCore = exports['rsg-core']:GetCoreObject()
 
 RobLocations = {}

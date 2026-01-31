@@ -1,3 +1,21 @@
+--[[
+    ██╗     ██╗  ██╗██████╗       ██╗  ██╗ ██████╗ ██╗   ██╗███████╗███████╗██████╗  ██████╗ ██████╗ 
+    ██║     ╚██╗██╔╝██╔══██╗      ██║  ██║██╔═══██╗██║   ██║██╔════╝██╔════╝██╔══██╗██╔═══██╗██╔══██╗
+    ██║      ╚███╔╝ ██████╔╝█████╗███████║██║   ██║██║   ██║███████╗█████╗  ██████╔╝██║   ██║██████╔╝
+    ██║      ██╔██╗ ██╔══██╗╚════╝██╔══██║██║   ██║██║   ██║╚════██║██╔══╝  ██╔══██╗██║   ██║██╔══██╗
+    ███████╗██╔╝ ██╗██║  ██║      ██║  ██║╚██████╔╝╚██████╔╝███████║███████╗██║  ██║╚██████╔╝██████╔╝
+    ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝      ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ 
+    
+    Client Main Script - House Entry & Robbery Zones
+    Copyright © 2026 LXR Development - All Rights Reserved
+    
+    This script handles the main client-side logic for house robbery initiation:
+    - Creates interaction zones at house entrances
+    - Handles lockpicking minigame
+    - Manages cooldown and lawmen checks
+    - Triggers police alerts based on configured chances
+]]
+
 local RSGCore = exports['rsg-core']:GetCoreObject()
 lib.locale()
 
