@@ -1,3 +1,21 @@
+--[[
+    ██╗     ██╗  ██╗██████╗       ██╗  ██╗ ██████╗ ██╗   ██╗███████╗███████╗██████╗  ██████╗ ██████╗ 
+    ██║     ╚██╗██╔╝██╔══██╗      ██║  ██║██╔═══██╗██║   ██║██╔════╝██╔════╝██╔══██╗██╔═══██╗██╔══██╗
+    ██║      ╚███╔╝ ██████╔╝█████╗███████║██║   ██║██║   ██║███████╗█████╗  ██████╔╝██║   ██║██████╔╝
+    ██║      ██╔██╗ ██╔══██╗╚════╝██╔══██║██║   ██║██║   ██║╚════██║██╔══╝  ██╔══██╗██║   ██║██╔══██╗
+    ███████╗██╔╝ ██╗██║  ██║      ██║  ██║╚██████╔╝╚██████╔╝███████║███████╗██║  ██║╚██████╔╝██████╔╝
+    ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝      ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ 
+    
+    Client Main Script - House Entry & Robbery Zones
+    Copyright © 2026 LXR Development - All Rights Reserved
+    
+    This script handles the main client-side logic for house robbery initiation:
+    - Creates interaction zones at house entrances
+    - Handles lockpicking minigame
+    - Manages cooldown and lawmen checks
+    - Triggers police alerts based on configured chances
+]]
+
 local RSGCore = exports['rsg-core']:GetCoreObject()
 lib.locale()
 
@@ -41,7 +59,7 @@ CreateThread(function()
                             local entercoords = vec3(v.entercoords.x, v.entercoords.y, v.entercoords.z)
                             local chance = math.random(1,99)
                             if chance < Config.PoliceChance then
-                                TriggerPolice(entercoords)
+                                TriggerPolice(entercoords, v.name)
                             end
                             lib.callback.await('y0-houserobbery:server:removeItem', false, Config.BreakInItem)
                             TriggerServerEvent('y0-houserobbery:server:TriggerCooldown', "activate",k)
