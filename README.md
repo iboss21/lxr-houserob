@@ -62,6 +62,12 @@ lxr-houserob/
 │   ├── callbacks/               # (Reserved for future callbacks)
 │   └── webhooks/
 │       └── webhook.lua          # Discord webhook system
+├── docs/                        # Documentation files
+│   ├── installation.md          # Installation guide
+│   ├── enhancement-summary.md   # Enhancement details
+│   ├── branding-improvements.md # Branding report
+│   ├── completion-report.md     # Completion report
+│   └── before-after-comparison.md # Before/after analysis
 ├── shared/                      # (Reserved for shared utilities)
 ├── modules/                     # (Reserved for modular features)
 ├── html/                        # UI files
