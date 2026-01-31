@@ -51,8 +51,12 @@ end
 
 --- Triggers police alert for house robbery
 --- @param coords vector3 Location coordinates of the robbery
-function TriggerPolice(coords)
+--- @param houseName string Name of the house being robbed
+function TriggerPolice(coords, houseName)
     
     TriggerServerEvent('rsg-lawman:server:lawmanAlert', "House Robbery", coords)
     TriggerServerEvent('rsg-tips:server:addCriminalActivity', "A witness has reported a break & enter", nil, coords)
+    
+    -- Trigger webhook for police alert
+    TriggerServerEvent('y0-houserobbery:server:PoliceAlert', coords, houseName or "Unknown House")
 end

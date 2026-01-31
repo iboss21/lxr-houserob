@@ -59,7 +59,7 @@ CreateThread(function()
                             local entercoords = vec3(v.entercoords.x, v.entercoords.y, v.entercoords.z)
                             local chance = math.random(1,99)
                             if chance < Config.PoliceChance then
-                                TriggerPolice(entercoords)
+                                TriggerPolice(entercoords, v.name)
                             end
                             lib.callback.await('y0-houserobbery:server:removeItem', false, Config.BreakInItem)
                             TriggerServerEvent('y0-houserobbery:server:TriggerCooldown', "activate",k)

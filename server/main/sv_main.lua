@@ -20,8 +20,18 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 lib.locale()
 
+--────────────────────────────────────────────────────────────────────────────
+-- GLOBAL VARIABLES
+--────────────────────────────────────────────────────────────────────────────
 HouseCooldown = {}
 Cooldown = Config.HouseCooldowns
+
+-- Track robbery rewards for webhook reporting
+local RobberyRewards = {} -- Format: [source] = { {item = "itemname", amount = 1}, ... }
+
+--────────────────────────────────────────────────────────────────────────────
+-- REWARD DISTRIBUTION
+--────────────────────────────────────────────────────────────────────────────
 
 RegisterNetEvent('y0-houserobbery:server:ReceiveReward', function(data, id)
 
@@ -33,6 +43,12 @@ RegisterNetEvent('y0-houserobbery:server:ReceiveReward', function(data, id)
     if not Player then return end
 
     Player.Functions.AddItem(randomReward,randomAmount)
+
+    -- Track rewards for webhook
+    if not RobberyRewards[_source] then
+        RobberyRewards[_source] = {}
+    end
+    table.insert(RobberyRewards[_source], {item = randomReward, amount = randomAmount})
 
     TriggerClientEvent('ox_lib:notify', _source, {
         type = 'success',
@@ -53,12 +69,22 @@ RegisterNetEvent('y0-houserobbery:server:ReceiveSpecialReward', function(data, i
 
     Player.Functions.AddItem(randomReward,randomAmount)
 
+    -- Track rewards for webhook
+    if not RobberyRewards[_source] then
+        RobberyRewards[_source] = {}
+    end
+    table.insert(RobberyRewards[_source], {item = randomReward, amount = randomAmount})
+
     TriggerClientEvent('ox_lib:notify', _source, {
         type = 'success',
         title = locale('house_robbery'),
         description = locale('Received') .. randomReward .. ' '..randomAmount..'x',
     })
 end)
+
+--────────────────────────────────────────────────────────────────────────────
+-- ROUTING BUCKET MANAGEMENT
+--────────────────────────────────────────────────────────────────────────────
 
 RegisterNetEvent('y0-houserobbery:server:RoutingBucketPed', function(ped)
     local _source = source
@@ -83,6 +109,11 @@ RegisterNetEvent('y0-houserobbery:server:RoutingBucket', function(toggle,data, i
         local discord = RSGCore.Functions.GetIdentifier(src, 'discord') 
         local dsc = "<@" .. discord:gsub("discord:", "") .. ">" 
 
+        -- Send robbery attempt webhook
+        if Config.Webhooks and Config.Webhooks.Enabled then
+            exports['lxr-houserob']:SendRobberyAttemptWebhook(src, id, data.name, data.entercoords)
+        end
+
         TriggerEvent(
         'rsg-log:server:CreateLog',
         'robbery',
@@ -98,8 +129,31 @@ RegisterNetEvent('y0-houserobbery:server:RoutingBucket', function(toggle,data, i
 
     elseif toggle == "Exit" then
         SetPlayerRoutingBucket(_source, 0)
+        
+        -- Send successful robbery webhook with collected rewards
+        if Config.Webhooks and Config.Webhooks.Enabled and RobberyRewards[_source] then
+            exports['lxr-houserob']:SendRobberySuccessWebhook(_source, id, data.name, RobberyRewards[_source])
+            RobberyRewards[_source] = nil -- Clear rewards after reporting
+        end
     end
 end)
+
+--────────────────────────────────────────────────────────────────────────────
+-- POLICE ALERT WEBHOOK
+--────────────────────────────────────────────────────────────────────────────
+
+RegisterNetEvent('y0-houserobbery:server:PoliceAlert', function(coords, houseName)
+    local _source = source
+    
+    -- Send police alert webhook
+    if Config.Webhooks and Config.Webhooks.Enabled then
+        exports['lxr-houserob']:SendPoliceAlertWebhook(_source, coords, houseName)
+    end
+end)
+
+--────────────────────────────────────────────────────────────────────────────
+-- COOLDOWN MANAGEMENT
+--────────────────────────────────────────────────────────────────────────────
 
 RegisterNetEvent('y0-houserobbery:server:TriggerCooldown', function(toggle, id)
     if toggle == "activate" then
@@ -114,13 +168,25 @@ RegisterNetEvent('y0-houserobbery:server:TriggerCooldown', function(toggle, id)
     end  
 end)
 
+--────────────────────────────────────────────────────────────────────────────
+-- SERVER CALLBACKS
+--────────────────────────────────────────────────────────────────────────────
+
+--- Removes item from player's inventory
+--- @param source number Player server ID
+--- @param removedItem string Item name to remove
+--- @return boolean success Whether item was successfully removed
 lib.callback.register('y0-houserobbery:server:removeItem', function(source, removedItem)
     local src = source
     local xPlayer = RSGCore.Functions.GetPlayer(src)
     return xPlayer.Functions.RemoveItem(removedItem,1)
 end)
 
-
+--- Checks if a house is on cooldown
+--- @param source number Player server ID
+--- @param id number House ID to check
+--- @param data table House data
+--- @return boolean inCooldown Whether the house is on cooldown
 lib.callback.register('y0-houserobbery:server:checkCooldown', function(source, id, data)
     for i, v in ipairs(HouseCooldown) do
         if v.id == id then
@@ -135,6 +201,9 @@ lib.callback.register('y0-houserobbery:server:checkCooldown', function(source, i
     return false
 end)
 
+--- Checks the number of law enforcement officers online
+--- @param source number Player server ID
+--- @return number count Number of lawmen online
 lib.callback.register('y0-houserobbery:server:checkLawmen', function(source, id, data)
     local players = RSGCore.Functions.GetPlayers()
     local count = 0
@@ -149,6 +218,11 @@ lib.callback.register('y0-houserobbery:server:checkLawmen', function(source, id,
     return count
 end)
 
+--────────────────────────────────────────────────────────────────────────────
+-- COOLDOWN CLEANUP THREAD
+--────────────────────────────────────────────────────────────────────────────
+
+--- Automatically cleanup expired cooldowns
 CreateThread(function()
     while true do
         local currentTime = os.time()
