@@ -126,7 +126,7 @@ function TriggerPolice(coords, houseName)
     exports['your-police-script']:CreateAlert('House Robbery', coords)
     
     -- Keep webhook trigger
-    TriggerServerEvent('y0-houserobbery:server:PoliceAlert', coords, houseName or "Unknown House")
+    TriggerServerEvent('lxr-houserob:server:PoliceAlert', coords, houseName or "Unknown House")
 end
 ```
 

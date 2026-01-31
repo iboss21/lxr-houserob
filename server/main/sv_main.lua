@@ -33,7 +33,7 @@ local RobberyRewards = {} -- Format: [source] = { {item = "itemname", amount = 1
 -- REWARD DISTRIBUTION
 --────────────────────────────────────────────────────────────────────────────
 
-RegisterNetEvent('y0-houserobbery:server:ReceiveReward', function(data, id)
+RegisterNetEvent('lxr-houserob:server:ReceiveReward', function(data, id)
 
     local _source = source
     local Player = RSGCore.Functions.GetPlayer(_source)
@@ -58,7 +58,7 @@ RegisterNetEvent('y0-houserobbery:server:ReceiveReward', function(data, id)
 end)
 
 
-RegisterNetEvent('y0-houserobbery:server:ReceiveSpecialReward', function(data, id)
+RegisterNetEvent('lxr-houserob:server:ReceiveSpecialReward', function(data, id)
 
     local _source = source
     local Player = RSGCore.Functions.GetPlayer(_source)
@@ -86,12 +86,12 @@ end)
 -- ROUTING BUCKET MANAGEMENT
 --────────────────────────────────────────────────────────────────────────────
 
-RegisterNetEvent('y0-houserobbery:server:RoutingBucketPed', function(ped)
+RegisterNetEvent('lxr-houserob:server:RoutingBucketPed', function(ped)
     local _source = source
         SetEntityRoutingBucket(NetworkGetEntityFromNetworkId(ped), GetPlayerRoutingBucket(_source))
 end)
 
-RegisterNetEvent('y0-houserobbery:server:RoutingBucket', function(toggle,data, id)
+RegisterNetEvent('lxr-houserob:server:RoutingBucket', function(toggle,data, id)
     local _source = source
     local Player = RSGCore.Functions.GetPlayer(_source)
     local bucketId = math.random(400,760)
@@ -142,7 +142,7 @@ end)
 -- POLICE ALERT WEBHOOK
 --────────────────────────────────────────────────────────────────────────────
 
-RegisterNetEvent('y0-houserobbery:server:PoliceAlert', function(coords, houseName)
+RegisterNetEvent('lxr-houserob:server:PoliceAlert', function(coords, houseName)
     local _source = source
     
     -- Send police alert webhook
@@ -155,7 +155,7 @@ end)
 -- COOLDOWN MANAGEMENT
 --────────────────────────────────────────────────────────────────────────────
 
-RegisterNetEvent('y0-houserobbery:server:TriggerCooldown', function(toggle, id)
+RegisterNetEvent('lxr-houserob:server:TriggerCooldown', function(toggle, id)
     if toggle == "activate" then
         table.insert(HouseCooldown, { cooldown = os.time() + Cooldown, id = id })
     elseif toggle == "deactivate" then
@@ -176,7 +176,7 @@ end)
 --- @param source number Player server ID
 --- @param removedItem string Item name to remove
 --- @return boolean success Whether item was successfully removed
-lib.callback.register('y0-houserobbery:server:removeItem', function(source, removedItem)
+lib.callback.register('lxr-houserob:server:removeItem', function(source, removedItem)
     local src = source
     local xPlayer = RSGCore.Functions.GetPlayer(src)
     return xPlayer.Functions.RemoveItem(removedItem,1)
@@ -187,7 +187,7 @@ end)
 --- @param id number House ID to check
 --- @param data table House data
 --- @return boolean inCooldown Whether the house is on cooldown
-lib.callback.register('y0-houserobbery:server:checkCooldown', function(source, id, data)
+lib.callback.register('lxr-houserob:server:checkCooldown', function(source, id, data)
     for i, v in ipairs(HouseCooldown) do
         if v.id == id then
             if v.cooldown > os.time() then
@@ -204,7 +204,7 @@ end)
 --- Checks the number of law enforcement officers online
 --- @param source number Player server ID
 --- @return number count Number of lawmen online
-lib.callback.register('y0-houserobbery:server:checkLawmen', function(source, id, data)
+lib.callback.register('lxr-houserob:server:checkLawmen', function(source, id, data)
     local players = RSGCore.Functions.GetPlayers()
     local count = 0
 

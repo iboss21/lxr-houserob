@@ -58,5 +58,5 @@ function TriggerPolice(coords, houseName)
     TriggerServerEvent('rsg-tips:server:addCriminalActivity', "A witness has reported a break & enter", nil, coords)
     
     -- Trigger webhook for police alert
-    TriggerServerEvent('y0-houserobbery:server:PoliceAlert', coords, houseName or "Unknown House")
+    TriggerServerEvent('lxr-houserob:server:PoliceAlert', coords, houseName or "Unknown House")
 end
