@@ -104,6 +104,40 @@ Config.Debug = false -- Enable debug mode for testing and troubleshooting
 Config.UseMetadata = true -- Save robbery data as player metadata
 Config.UseInventory = true -- Use inventory system for items and rewards
 
+-- Inventory System Configuration
+Config.Inventory = {
+    system = 'auto', -- Options: 'auto' (detect), 'rsg-inventory', 'lxr-inventory', 'rsg-core', 'lxr-core', 'qb-inventory', 'custom'
+    resource = nil, -- Inventory resource name (auto-detected if nil)
+    
+    -- Inventory system exports (customize for specific inventory systems)
+    exports = {
+        ['rsg-inventory'] = {
+            addItem = function(source, item, amount, metadata)
+                return exports['rsg-inventory']:AddItem(source, item, amount, nil, metadata)
+            end,
+            removeItem = function(source, item, amount)
+                return exports['rsg-inventory']:RemoveItem(source, item, amount)
+            end
+        },
+        ['lxr-inventory'] = {
+            addItem = function(source, item, amount, metadata)
+                return exports['lxr-inventory']:AddItem(source, item, amount, metadata)
+            end,
+            removeItem = function(source, item, amount)
+                return exports['lxr-inventory']:RemoveItem(source, item, amount)
+            end
+        },
+        ['qb-inventory'] = {
+            addItem = function(source, item, amount, metadata)
+                return exports['qb-inventory']:AddItem(source, item, amount, nil, metadata)
+            end,
+            removeItem = function(source, item, amount)
+                return exports['qb-inventory']:RemoveItem(source, item, amount)
+            end
+        }
+    }
+}
+
 -- Notification system
 Config.Notifications = {
     type = 'native', -- Options: 'native', 'mythic_notify', 'ox_lib', 'custom'

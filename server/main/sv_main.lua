@@ -29,6 +29,173 @@ Cooldown = Config.HouseCooldowns
 -- Track robbery rewards for webhook reporting
 local RobberyRewards = {} -- Format: [source] = { {item = "itemname", amount = 1}, ... }
 
+-- Detected inventory system
+local DetectedInventory = nil
+
+-- Framework Core object (dynamically initialized based on Config.Framework)
+local Core = nil
+local function GetCore()
+    if Core then return Core end
+    
+    -- Try to get core object based on configured framework
+    local frameworkConfig = Config.FrameworkTriggers[Config.Framework]
+    if frameworkConfig then
+        local success, coreObj = pcall(function()
+            return exports[frameworkConfig.resource]:GetCoreObject()
+        end)
+        if success and coreObj then
+            Core = coreObj
+            print('[LXR-HouseRob] Framework initialized: ' .. Config.Framework)
+            return Core
+        end
+    end
+    
+    -- Fallback to RSGCore if config doesn't work
+    Core = RSGCore
+    print('[LXR-HouseRob] Using default framework: rsg-core')
+    return Core
+end
+
+-- Initialize Core on script load
+Core = GetCore()
+
+--────────────────────────────────────────────────────────────────────────────
+-- INVENTORY SYSTEM COMPATIBILITY LAYER
+--────────────────────────────────────────────────────────────────────────────
+
+--- Detects the inventory system being used on the server
+--- @return string|nil inventorySystem The detected inventory system
+local function DetectInventorySystem()
+    if DetectedInventory then return DetectedInventory end
+    
+    -- Check if specific inventory system is configured
+    if Config.Inventory.system ~= 'auto' then
+        DetectedInventory = Config.Inventory.system
+        print('[LXR-HouseRob] Using configured inventory system: ' .. DetectedInventory)
+        return DetectedInventory
+    end
+    
+    -- Auto-detect inventory system by checking for running resources
+    local inventoryResources = {
+        'rsg-inventory',
+        'lxr-inventory', 
+        'qb-inventory'
+    }
+    
+    for _, resourceName in ipairs(inventoryResources) do
+        if GetResourceState(resourceName) == 'started' then
+            DetectedInventory = resourceName
+            print('[LXR-HouseRob] Auto-detected inventory system: ' .. DetectedInventory)
+            return DetectedInventory
+        end
+    end
+    
+    -- Default to core framework functions (use framework name directly, not with -core suffix)
+    local framework = Config.Framework or 'rsg-core'
+    -- Strip any existing -core suffix to avoid doubling
+    framework = framework:gsub('%-core$', '')
+    DetectedInventory = framework .. '-core'
+    print('[LXR-HouseRob] Using core framework inventory: ' .. DetectedInventory)
+    return DetectedInventory
+end
+
+--- Adds an item to player's inventory using the appropriate inventory system
+--- @param source number Player server ID
+--- @param item string Item name
+--- @param amount number Amount to add
+--- @param metadata table|nil Optional item metadata
+--- @return boolean success Whether item was successfully added
+local function AddInventoryItem(source, item, amount, metadata)
+    local Player = Core.Functions.GetPlayer(source)
+    if not Player then 
+        print('[LXR-HouseRob] ERROR: Player not found for source ' .. source)
+        return false 
+    end
+    
+    local inventorySystem = DetectInventorySystem()
+    local success = false
+    
+    -- Try inventory-specific export first
+    if Config.Inventory.exports[inventorySystem] then
+        local status, result = pcall(function()
+            return Config.Inventory.exports[inventorySystem].addItem(source, item, amount, metadata)
+        end)
+        
+        if status then
+            success = result ~= false
+            if success then
+                print('[LXR-HouseRob] Added item via ' .. inventorySystem .. ': ' .. item .. ' x' .. amount)
+            end
+        else
+            print('[LXR-HouseRob] ERROR calling ' .. inventorySystem .. ' export: ' .. tostring(result))
+        end
+    end
+    
+    -- Fallback to core framework method
+    if not success then
+        local status, result = pcall(function()
+            return Player.Functions.AddItem(item, amount, false, metadata)
+        end)
+        
+        if status and result ~= false then
+            success = true
+            print('[LXR-HouseRob] Added item via core framework: ' .. item .. ' x' .. amount)
+        else
+            print('[LXR-HouseRob] ERROR adding item via core framework: ' .. tostring(result))
+        end
+    end
+    
+    return success
+end
+
+--- Removes an item from player's inventory using the appropriate inventory system
+--- @param source number Player server ID
+--- @param item string Item name
+--- @param amount number Amount to remove
+--- @return boolean success Whether item was successfully removed
+local function RemoveInventoryItem(source, item, amount)
+    local Player = Core.Functions.GetPlayer(source)
+    if not Player then 
+        print('[LXR-HouseRob] ERROR: Player not found for source ' .. source)
+        return false 
+    end
+    
+    local inventorySystem = DetectInventorySystem()
+    local success = false
+    
+    -- Try inventory-specific export first
+    if Config.Inventory.exports[inventorySystem] then
+        local status, result = pcall(function()
+            return Config.Inventory.exports[inventorySystem].removeItem(source, item, amount)
+        end)
+        
+        if status then
+            success = result ~= false
+            if success then
+                print('[LXR-HouseRob] Removed item via ' .. inventorySystem .. ': ' .. item .. ' x' .. amount)
+            end
+        else
+            print('[LXR-HouseRob] ERROR calling ' .. inventorySystem .. ' export: ' .. tostring(result))
+        end
+    end
+    
+    -- Fallback to core framework method
+    if not success then
+        local status, result = pcall(function()
+            return Player.Functions.RemoveItem(item, amount)
+        end)
+        
+        if status and result ~= false then
+            success = true
+            print('[LXR-HouseRob] Removed item via core framework: ' .. item .. ' x' .. amount)
+        else
+            print('[LXR-HouseRob] ERROR removing item via core framework: ' .. tostring(result))
+        end
+    end
+    
+    return success
+end
+
 --────────────────────────────────────────────────────────────────────────────
 -- REWARD DISTRIBUTION
 --────────────────────────────────────────────────────────────────────────────
@@ -36,13 +203,24 @@ local RobberyRewards = {} -- Format: [source] = { {item = "itemname", amount = 1
 RegisterNetEvent('lxr-houserob:server:ReceiveReward', function(data, id)
 
     local _source = source
-    local Player = RSGCore.Functions.GetPlayer(_source)
+    local Player = Core.Functions.GetPlayer(_source)
     local reward = data.locations[id].rewards
     local randomReward = reward[math.random(1, #reward)]
     local randomAmount = math.random(data.locations[id].rewardsAmount.min,data.locations[id].rewardsAmount.max)
     if not Player then return end
 
-    Player.Functions.AddItem(randomReward,randomAmount)
+    -- Add item using compatibility layer
+    local success = AddInventoryItem(_source, randomReward, randomAmount)
+    
+    if not success then
+        print('[LXR-HouseRob] ERROR: Failed to add item to inventory for player ' .. _source)
+        TriggerClientEvent('ox_lib:notify', _source, {
+            type = 'error',
+            title = locale('house_robbery'),
+            description = 'Failed to receive item. Contact an administrator.',
+        })
+        return
+    end
 
     -- Track rewards for webhook
     if not RobberyRewards[_source] then
@@ -61,13 +239,24 @@ end)
 RegisterNetEvent('lxr-houserob:server:ReceiveSpecialReward', function(data, id)
 
     local _source = source
-    local Player = RSGCore.Functions.GetPlayer(_source)
+    local Player = Core.Functions.GetPlayer(_source)
     local reward = data.SpecialProp.rewards
     local randomReward = reward[math.random(1, #reward)]
     local randomAmount = math.random(data.SpecialProp.rewardsAmount.min,data.SpecialProp.rewardsAmount.max)
     if not Player then return end
 
-    Player.Functions.AddItem(randomReward,randomAmount)
+    -- Add item using compatibility layer
+    local success = AddInventoryItem(_source, randomReward, randomAmount)
+    
+    if not success then
+        print('[LXR-HouseRob] ERROR: Failed to add special item to inventory for player ' .. _source)
+        TriggerClientEvent('ox_lib:notify', _source, {
+            type = 'error',
+            title = locale('house_robbery'),
+            description = 'Failed to receive special item. Contact an administrator.',
+        })
+        return
+    end
 
     -- Track rewards for webhook
     if not RobberyRewards[_source] then
@@ -93,7 +282,7 @@ end)
 
 RegisterNetEvent('lxr-houserob:server:RoutingBucket', function(toggle,data, id)
     local _source = source
-    local Player = RSGCore.Functions.GetPlayer(_source)
+    local Player = Core.Functions.GetPlayer(_source)
     local bucketId = math.random(400,760)
 
     if not Player then return end
@@ -104,9 +293,9 @@ RegisterNetEvent('lxr-houserob:server:RoutingBucket', function(toggle,data, id)
         SetPlayerRoutingBucket(_source, bucketId)
         
         local src = source
-        local Player = RSGCore.Functions.GetPlayer(src)
+        local Player = Core.Functions.GetPlayer(src)
         local Playercid = Player.PlayerData.citizenid
-        local discord = RSGCore.Functions.GetIdentifier(src, 'discord') 
+        local discord = Core.Functions.GetIdentifier(src, 'discord') 
         local dsc = "<@" .. discord:gsub("discord:", "") .. ">" 
 
         -- Send robbery attempt webhook
@@ -178,8 +367,7 @@ end)
 --- @return boolean success Whether item was successfully removed
 lib.callback.register('lxr-houserob:server:removeItem', function(source, removedItem)
     local src = source
-    local xPlayer = RSGCore.Functions.GetPlayer(src)
-    return xPlayer.Functions.RemoveItem(removedItem,1)
+    return RemoveInventoryItem(src, removedItem, 1)
 end)
 
 --- Checks if a house is on cooldown
@@ -205,11 +393,11 @@ end)
 --- @param source number Player server ID
 --- @return number count Number of lawmen online
 lib.callback.register('lxr-houserob:server:checkLawmen', function(source, id, data)
-    local players = RSGCore.Functions.GetPlayers()
+    local players = Core.Functions.GetPlayers()
     local count = 0
 
     for _, playerId in pairs(players) do
-        local Player = RSGCore.Functions.GetPlayer(playerId)
+        local Player = Core.Functions.GetPlayer(playerId)
         if Player and Player.PlayerData.job and Player.PlayerData.job.type == 'leo' then
             count = count + 1
         end

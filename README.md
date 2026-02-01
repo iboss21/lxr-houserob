@@ -26,6 +26,7 @@ A comprehensive and feature-rich house robbery script for RedM using routing buc
 - **Police System** - Automatic alerts with configurable chance
 - **Cooldown System** - Prevents house farming with customizable timers
 - **Minigame Integration** - Skill checks for lockpicking and looting
+- **Universal Inventory Support** - Auto-detects and supports all major inventory systems
 - **Performance Optimized** - 0.00ms idle, 0.01-0.03ms active
 - **Tebex Ready** - Full escrow support for commercial use
 
@@ -38,6 +39,11 @@ A comprehensive and feature-rich house robbery script for RedM using routing buc
 - [ox_lib](https://github.com/overextended/ox_lib) - Library functions
 - [ox_target](https://github.com/overextended/ox_target) - Interaction system
 - [jo_libs](https://github.com/JokeDevil/jo_libs) - Additional utilities
+
+**Inventory Systems Supported:**
+- RSG-Core (built-in) / LXR-Core / QB-Core
+- rsg-inventory v2 / lxr-inventory / qb-inventory
+- Auto-detects and adapts to your inventory system
 
 **Optional:**
 - Discord webhook (for notifications)
@@ -203,6 +209,14 @@ Enhanced by: LXR Development Team
 ---
 
 ## 🔄 Changelog
+
+### v2.1.0 (2026-02-01)
+- ✨ **Universal Inventory System Support** - Auto-detects and works with all major inventory systems
+- ✨ Added compatibility for rsg-inventory v2, lxr-inventory, and qb-inventory
+- ✨ Improved error handling for inventory operations
+- ✨ Added detailed logging for inventory system detection
+- 🐛 Fixed items not being added to inventory after robbery
+- 📝 Updated documentation with inventory configuration guide
 
 ### v2.0.0 (2026-01-31)
 - ✨ Restructured folder organization
