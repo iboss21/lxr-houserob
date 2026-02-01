@@ -370,6 +370,22 @@ lib.callback.register('lxr-houserob:server:removeItem', function(source, removed
     return RemoveInventoryItem(src, removedItem, 1)
 end)
 
+--- Checks if player has an item in their inventory
+--- @param source number Player server ID
+--- @param item string Item name to check
+--- @return boolean hasItem Whether player has the item
+lib.callback.register('lxr-houserob:server:hasItem', function(source, item)
+    local Player = Core.Functions.GetPlayer(source)
+    if not Player then 
+        print('[LXR-HouseRob] ERROR: Player not found for source ' .. source)
+        return false 
+    end
+    
+    -- Try to get item from player's inventory
+    local hasItem = Player.Functions.GetItemByName(item)
+    return hasItem ~= nil
+end)
+
 --- Checks if a house is on cooldown
 --- @param source number Player server ID
 --- @param id number House ID to check
