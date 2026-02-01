@@ -32,8 +32,32 @@ local RobberyRewards = {} -- Format: [source] = { {item = "itemname", amount = 1
 -- Detected inventory system
 local DetectedInventory = nil
 
--- Framework Core object (for compatibility with multiple frameworks)
-local Core = RSGCore
+-- Framework Core object (dynamically initialized based on Config.Framework)
+local Core = nil
+local function GetCore()
+    if Core then return Core end
+    
+    -- Try to get core object based on configured framework
+    local frameworkConfig = Config.FrameworkTriggers[Config.Framework]
+    if frameworkConfig then
+        local success, coreObj = pcall(function()
+            return exports[frameworkConfig.resource]:GetCoreObject()
+        end)
+        if success and coreObj then
+            Core = coreObj
+            print('[LXR-HouseRob] Framework initialized: ' .. Config.Framework)
+            return Core
+        end
+    end
+    
+    -- Fallback to RSGCore if config doesn't work
+    Core = RSGCore
+    print('[LXR-HouseRob] Using default framework: rsg-core')
+    return Core
+end
+
+-- Initialize Core on script load
+Core = GetCore()
 
 --────────────────────────────────────────────────────────────────────────────
 -- INVENTORY SYSTEM COMPATIBILITY LAYER
@@ -66,8 +90,11 @@ local function DetectInventorySystem()
         end
     end
     
-    -- Default to core framework functions
-    DetectedInventory = (Config.Framework or 'rsg-core') .. '-core'
+    -- Default to core framework functions (use framework name directly, not with -core suffix)
+    local framework = Config.Framework or 'rsg-core'
+    -- Strip any existing -core suffix to avoid doubling
+    framework = framework:gsub('%-core$', '')
+    DetectedInventory = framework .. '-core'
     print('[LXR-HouseRob] Using core framework inventory: ' .. DetectedInventory)
     return DetectedInventory
 end
