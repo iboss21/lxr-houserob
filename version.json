@@ -1,8 +1,8 @@
 {
     "resource": "lxr-houserob",
     "name": "LXR House Robbery System",
-    "version": "2.0.0",
-    "release_date": "2026-01-31",
+    "version": "2.1.0",
+    "release_date": "2026-02-01",
     "description": "Professional house robbery system for RedM with instanced interiors, NPC defenders, and comprehensive features",
     "framework": "RSG-Core",
     "platform": "RedM",
@@ -47,6 +47,7 @@
         "Lockpicking minigame",
         "Comprehensive loot system",
         "Cooldown management",
+        "Universal inventory system support",
         "Multi-language support",
         "Full escrow support"
     ],
@@ -58,12 +59,27 @@
     },
     "compatibility": {
         "frameworks": ["RSG-Core", "QB-Core", "LXRCore", "Standalone"],
+        "inventories": ["rsg-inventory v2", "lxr-inventory", "qb-inventory", "core-framework"],
         "redm_version": "1355+",
         "escrow": true,
         "tebex_ready": true,
         "cfx_compliant": true
     },
     "versions": {
+        "2.1.0": {
+            "release_date": "2026-02-01",
+            "type": "minor",
+            "changes": [
+                "Universal inventory system support with auto-detection",
+                "Added compatibility for rsg-inventory v2, lxr-inventory, qb-inventory",
+                "Improved error handling for inventory operations",
+                "Added detailed logging for inventory system detection",
+                "Fixed items not being added to inventory after robbery",
+                "Updated documentation with inventory configuration guide"
+            ],
+            "breaking_changes": false,
+            "migration_required": false
+        },
         "2.0.0": {
             "release_date": "2026-01-31",
             "type": "major",

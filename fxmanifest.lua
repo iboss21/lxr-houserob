@@ -84,7 +84,7 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 name 'lxr-houserob'
 description 'Complete house robbery and burglary system for RedM | lxr-scripts.com'
 author 'LXR Development Team (Original: younNGG97)'
-version '2.0.0'
+version '2.1.0'
 url 'https://lxr-scripts.com'
 
 lua54 'yes'

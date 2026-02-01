@@ -60,6 +60,33 @@ Config.Webhooks = {
 
 Open `config.lua` and adjust settings to your preference:
 
+### Inventory System Configuration (New in v2.1)
+
+The script now supports multiple inventory systems. By default, it auto-detects your inventory:
+
+```lua
+Config.Inventory = {
+    system = 'auto', -- Auto-detect (recommended)
+    -- Or specify: 'rsg-inventory', 'lxr-inventory', 'qb-inventory', 'rsg-core', 'lxr-core'
+}
+```
+
+**Supported Inventory Systems:**
+- ✅ RSG-Core (built-in framework inventory)
+- ✅ LXR-Core (built-in framework inventory)
+- ✅ QB-Core (for qb-core framework)
+- ✅ rsg-inventory v2 (standalone inventory)
+- ✅ lxr-inventory (standalone inventory)
+- ✅ qb-inventory (standalone inventory)
+
+**Auto-detection** checks for running inventory resources and uses the appropriate method. If you experience issues, manually set the system:
+
+```lua
+Config.Inventory = {
+    system = 'rsg-inventory', -- Force specific inventory
+}
+```
+
 ### Basic Settings
 
 ```lua
@@ -154,6 +181,18 @@ end
 ---
 
 ## Troubleshooting
+
+### "Items not being added to inventory"
+- Check server console for `[LXR-HouseRob]` messages to see which inventory system is detected
+- Verify your inventory resource is started before lxr-houserob
+- Try manually setting the inventory system in config.lua:
+  ```lua
+  Config.Inventory = {
+      system = 'rsg-inventory', -- or your inventory system name
+  }
+  ```
+- Ensure your inventory system is compatible with exports (check its documentation)
+- Check for errors in F8 console on the client side
 
 ### "Cannot find lockpick item"
 - Check your inventory system's lockpick name
