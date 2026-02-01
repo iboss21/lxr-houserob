@@ -150,11 +150,8 @@ end
 	end
 	FreezeEntityPosition(playerPed, false)
 
-	-- NPC spawn chance is configured per-house, not globally
-	-- Check the house configuration for npcModel to determine if NPC should spawn
-	local npcChance = 100 -- Default to always spawn if npcModel is defined
-	if npcChance < 100 then -- This condition is now redundant but kept for compatibility
-
+	-- NPC spawn logic - spawns if npcModel is defined in house configuration
+	if houseData.npcModel and houseData.npcSpawnLocation then
 		RequestModel(houseData.npcModel)
 		while not HasModelLoaded(houseData.npcModel) do Wait(10) end
 		local npcSpawnLocation = houseData.npcSpawnLocation
