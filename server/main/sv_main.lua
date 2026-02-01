@@ -32,6 +32,9 @@ local RobberyRewards = {} -- Format: [source] = { {item = "itemname", amount = 1
 -- Detected inventory system
 local DetectedInventory = nil
 
+-- Framework Core object (for compatibility with multiple frameworks)
+local Core = RSGCore
+
 --────────────────────────────────────────────────────────────────────────────
 -- INVENTORY SYSTEM COMPATIBILITY LAYER
 --────────────────────────────────────────────────────────────────────────────
@@ -64,7 +67,7 @@ local function DetectInventorySystem()
     end
     
     -- Default to core framework functions
-    DetectedInventory = Config.Framework .. '-core'
+    DetectedInventory = (Config.Framework or 'rsg-core') .. '-core'
     print('[LXR-HouseRob] Using core framework inventory: ' .. DetectedInventory)
     return DetectedInventory
 end
@@ -76,7 +79,7 @@ end
 --- @param metadata table|nil Optional item metadata
 --- @return boolean success Whether item was successfully added
 local function AddInventoryItem(source, item, amount, metadata)
-    local Player = RSGCore.Functions.GetPlayer(source)
+    local Player = Core.Functions.GetPlayer(source)
     if not Player then 
         print('[LXR-HouseRob] ERROR: Player not found for source ' .. source)
         return false 
@@ -124,7 +127,7 @@ end
 --- @param amount number Amount to remove
 --- @return boolean success Whether item was successfully removed
 local function RemoveInventoryItem(source, item, amount)
-    local Player = RSGCore.Functions.GetPlayer(source)
+    local Player = Core.Functions.GetPlayer(source)
     if not Player then 
         print('[LXR-HouseRob] ERROR: Player not found for source ' .. source)
         return false 
@@ -173,7 +176,7 @@ end
 RegisterNetEvent('lxr-houserob:server:ReceiveReward', function(data, id)
 
     local _source = source
-    local Player = RSGCore.Functions.GetPlayer(_source)
+    local Player = Core.Functions.GetPlayer(_source)
     local reward = data.locations[id].rewards
     local randomReward = reward[math.random(1, #reward)]
     local randomAmount = math.random(data.locations[id].rewardsAmount.min,data.locations[id].rewardsAmount.max)
@@ -209,7 +212,7 @@ end)
 RegisterNetEvent('lxr-houserob:server:ReceiveSpecialReward', function(data, id)
 
     local _source = source
-    local Player = RSGCore.Functions.GetPlayer(_source)
+    local Player = Core.Functions.GetPlayer(_source)
     local reward = data.SpecialProp.rewards
     local randomReward = reward[math.random(1, #reward)]
     local randomAmount = math.random(data.SpecialProp.rewardsAmount.min,data.SpecialProp.rewardsAmount.max)
@@ -252,7 +255,7 @@ end)
 
 RegisterNetEvent('lxr-houserob:server:RoutingBucket', function(toggle,data, id)
     local _source = source
-    local Player = RSGCore.Functions.GetPlayer(_source)
+    local Player = Core.Functions.GetPlayer(_source)
     local bucketId = math.random(400,760)
 
     if not Player then return end
@@ -263,9 +266,9 @@ RegisterNetEvent('lxr-houserob:server:RoutingBucket', function(toggle,data, id)
         SetPlayerRoutingBucket(_source, bucketId)
         
         local src = source
-        local Player = RSGCore.Functions.GetPlayer(src)
+        local Player = Core.Functions.GetPlayer(src)
         local Playercid = Player.PlayerData.citizenid
-        local discord = RSGCore.Functions.GetIdentifier(src, 'discord') 
+        local discord = Core.Functions.GetIdentifier(src, 'discord') 
         local dsc = "<@" .. discord:gsub("discord:", "") .. ">" 
 
         -- Send robbery attempt webhook
@@ -363,11 +366,11 @@ end)
 --- @param source number Player server ID
 --- @return number count Number of lawmen online
 lib.callback.register('lxr-houserob:server:checkLawmen', function(source, id, data)
-    local players = RSGCore.Functions.GetPlayers()
+    local players = Core.Functions.GetPlayers()
     local count = 0
 
     for _, playerId in pairs(players) do
-        local Player = RSGCore.Functions.GetPlayer(playerId)
+        local Player = Core.Functions.GetPlayer(playerId)
         if Player and Player.PlayerData.job and Player.PlayerData.job.type == 'leo' then
             count = count + 1
         end
