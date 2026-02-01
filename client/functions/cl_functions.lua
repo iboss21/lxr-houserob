@@ -59,7 +59,7 @@ function EnterHouse(id, data)
 			if success then
 				local progressBar = lib.progressCircle({
 					position = 'middle',
-					duration = Config.SearchingTime,
+					duration = Config.Search.searchTime,
 					label = locale('searching_location'),
 					useWhileDead = false,
 					canCancel = false,
@@ -72,7 +72,7 @@ function EnterHouse(id, data)
 				if progressBar then
 					TriggerServerEvent('lxr-houserob:server:ReceiveSpecialReward', houseData)
 
-					if Config.DeletePropAfterInteraction then
+					if Config.Props.deleteAfterInteraction then
 						DeleteEntity(specialProp)
 
 					end
@@ -104,7 +104,7 @@ end
 					if success then
 					local progressBar = lib.progressCircle({
 					position = 'middle',
-				    duration = Config.SearchingTime,
+				    duration = Config.Search.searchTime,
 				    label = locale('searching_location'),
 				    useWhileDead = false,
     				canCancel = false,
@@ -116,7 +116,7 @@ end
 					table.insert(RobLocations, { zone = zoneName, coords = coords, id = id })
     				if progressBar then
 						TriggerServerEvent('lxr-houserob:server:ReceiveReward', houseData, k)
-							if Config.DeletePropAfterInteraction then
+							if Config.Props.deleteAfterInteraction then
 								for i, propData in ipairs(Props) do
 									if propData.zone == zoneName  then
 										DeleteObject(propData.prop)
@@ -150,9 +150,8 @@ end
 	end
 	FreezeEntityPosition(playerPed, false)
 
-	local npcChance = math.random(1, 99)
-	if npcChance < Config.npcChance then
-
+	-- NPC spawn logic - spawns if npcModel is defined in house configuration
+	if houseData.npcModel and houseData.npcSpawnLocation then
 		RequestModel(houseData.npcModel)
 		while not HasModelLoaded(houseData.npcModel) do Wait(10) end
 		local npcSpawnLocation = houseData.npcSpawnLocation

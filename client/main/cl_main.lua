@@ -30,14 +30,38 @@ CreateThread(function()
             options = {
             	label = locale('Rob_House'),
                 canInteract = function()
-                    return RSGCore.Functions.HasItem(Config.BreakInItem, 1) 
+                    return true -- Item check will be done server-side
                 end,
             	onSelect = function()
+                    -- Check if player has required item
+                    local hasItem = lib.callback.await('lxr-houserob:server:hasItem', false, Config.BreakIn.requiredItem)
+                    if not hasItem then 
+                        lib.notify({
+                            type = 'error',
+                            title = locale('house_robbery'),
+                            description = locale('need_lockpick')
+                        })
+                        return 
+                    end
                     
             		local count = lib.callback.await('lxr-houserob:server:checkLawmen')
-            		if count < Config.lawmenMinimun then return end
+            		if count < Config.LawEnforcement.lawmenMinimum then 
+                        lib.notify({
+                            type = 'error',
+                            title = locale('house_robbery'),
+                            description = locale('not_enough_lawmen')
+                        })
+                        return 
+                    end
             		local inCooldown = lib.callback.await('lxr-houserob:server:checkCooldown', false, k, v)
-            		if inCooldown then return end
+            		if inCooldown then 
+                        lib.notify({
+                            type = 'error',
+                            title = locale('house_robbery'),
+                            description = locale('house_on_cooldown')
+                        })
+                        return 
+                    end
                     local playerPed = PlayerPedId()
                     local animDict = Config.Animations.HouseEnter.anim
                     local animClip = Config.Animations.HouseEnter.clip
@@ -58,16 +82,17 @@ CreateThread(function()
                             ClearPedTasks(playerPed)
                             local entercoords = vec3(v.entercoords.x, v.entercoords.y, v.entercoords.z)
                             local chance = math.random(1,99)
-                            if chance < Config.PoliceChance then
+                            if chance < Config.PoliceAlert.alertChance then
                                 TriggerPolice(entercoords, v.name)
                             end
-                            lib.callback.await('lxr-houserob:server:removeItem', false, Config.BreakInItem)
+                            lib.callback.await('lxr-houserob:server:removeItem', false, Config.BreakIn.requiredItem)
                             TriggerServerEvent('lxr-houserob:server:TriggerCooldown', "activate",k)
                             EnterHouse(k, v)
-                        end
-
-                        if Config.LockpickBreaksOnError then
-                            lib.callback.await('lxr-houserob:server:removeItem', false, Config.BreakInItem)
+                        else
+                            -- Minigame failed
+                            if Config.BreakIn.lockpickBreaksOnError then
+                                lib.callback.await('lxr-houserob:server:removeItem', false, Config.BreakIn.requiredItem)
+                            end
                         end
 
                     ClearPedTasks(playerPed)

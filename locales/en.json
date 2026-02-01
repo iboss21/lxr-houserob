@@ -5,5 +5,8 @@
     "Rob_House" : "Break-in",
     "house_robbery" : "House Robbery",
     "Received" : "You Received ",
+    "need_lockpick" : "You need a lockpick to break in",
+    "not_enough_lawmen" : "Not enough lawmen online",
+    "house_on_cooldown" : "This house was recently robbed"
 }
    
